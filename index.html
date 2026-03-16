@@ -1,8 +1,66 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script>
-  window.location.href = "https://fkjjubbqvejhkwfvkbua.supabase.co/functions/v1/x7k2mq9p";
-</script>
+  <title>Claim Key</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0a0a0a; color: #fff; font-family: monospace; display: flex; justify-content: center; align-items: center; height: 100vh; }
+    .box { background: #111; border: 1px solid #2a2a2a; padding: 40px; border-radius: 8px; width: 100%; max-width: 480px; }
+    h1 { color: #a855f7; font-size: 1.2rem; margin-bottom: 8px; }
+    p { color: #666; font-size: 0.85rem; margin-bottom: 24px; }
+    input { width: 100%; background: #0a0a0a; border: 1px solid #2a2a2a; color: #fff; padding: 12px; border-radius: 6px; font-family: monospace; font-size: 0.9rem; margin-bottom: 12px; outline: none; }
+    input:focus { border-color: #a855f7; }
+    button { width: 100%; background: #a855f7; color: #fff; border: none; padding: 12px; border-radius: 6px; font-family: monospace; font-size: 0.9rem; cursor: pointer; }
+    button:hover { background: #9333ea; }
+    .error { color: #ef4444; font-size: 0.85rem; margin-top: 12px; display: none; }
+    .key-box { background: #0a0a0a; padding: 12px; border-radius: 6px; border: 1px solid #2a2a2a; word-break: break-all; color: #fff; font-size: 1rem; margin-bottom: 16px; }
+    .success { display: none; text-align: center; }
+  </style>
 </head>
+<body>
+  <div class="box">
+    <div id="form-view">
+      <h1>CLAIM YOUR KEY</h1>
+      <p>Enter your Ko-fi Order ID from your receipt to retrieve your license key.</p>
+      <input type="text" id="orderId" placeholder="Ko-fi Order ID" />
+      <button onclick="claim()">CLAIM</button>
+      <p class="error" id="error"></p>
+    </div>
+    <div id="success-view" class="success">
+      <h1 style="color:#a855f7;margin-bottom:16px">YOUR LICENSE KEY</h1>
+      <div class="key-box" id="key-display"></div>
+      <p style="color:#666;font-size:0.8rem" id="product-display"></p>
+      <p style="color:#ef4444;font-size:0.8rem;margin-top:12px">!! SAVE THIS KEY - THIS PAGE WILL NOT WORK AGAIN !!</p>
+    </div>
+  </div>
+  <script>
+    async function claim() {
+      const orderId = document.getElementById('orderId').value.trim()
+      if (!orderId) return
+      const btn = document.querySelector('button')
+      btn.disabled = true
+      btn.textContent = 'CLAIMING...'
+      const res = await fetch('https://fkjjubbqvejhkwfvkbua.supabase.co/functions/v1/x7k2mq9p?order=' + encodeURIComponent(orderId))
+      const data = await res.json()
+      if (data.success) {
+        document.getElementById('form-view').style.display = 'none'
+        document.getElementById('success-view').style.display = 'block'
+        document.getElementById('key-display').textContent = data.key
+        document.getElementById('product-display').textContent = 'Product: ' + data.product
+      } else {
+        let i = 3
+        const err = document.getElementById('error')
+        err.style.display = 'block'
+        err.textContent = data.message + ' - Closing in ' + i + 's'
+        const t = setInterval(function() {
+          i--
+          err.textContent = data.message + ' - Closing in ' + i + 's'
+          if (i <= 0) { clearInterval(t); window.close(); document.body.innerHTML = '' }
+        }, 1000)
+        btn.disabled = false
+        btn.textContent = 'CLAIM'
+      }
+    }
+  </script>
+</body>
 </html>
