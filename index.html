@@ -2,81 +2,123 @@
 <html>
 <head>
   <title>Claim Key</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #0a0a0a; color: #fff; font-family: monospace; display: flex; justify-content: center; align-items: center; height: 100vh; }
-    .box { background: #111; border: 1px solid #2a2a2a; padding: 40px; border-radius: 8px; width: 100%; max-width: 480px; }
-    h1 { color: #a855f7; font-size: 1.2rem; margin-bottom: 8px; }
-    p { color: #666; font-size: 0.85rem; margin-bottom: 24px; }
-    input { width: 100%; background: #0a0a0a; border: 1px solid #2a2a2a; color: #fff; padding: 12px; border-radius: 6px; font-family: monospace; font-size: 0.9rem; margin-bottom: 12px; outline: none; }
+    body { background: #0a0a0a; color: #fff; font-family: 'JetBrains Mono', monospace; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+    .box { background: #111; border: 1px solid #1e1e1e; border-radius: 12px; width: 100%; max-width: 460px; padding: 36px; margin: 20px; animation: fadeUp 0.5s ease; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    .logo { text-align: center; margin-bottom: 28px; }
+    .logo-ring { width: 52px; height: 52px; border-radius: 50%; border: 2px solid #a855f7; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(168,85,247,0.3); } 50% { box-shadow: 0 0 0 8px rgba(168,85,247,0); } }
+    .logo-inner { width: 28px; height: 28px; background: linear-gradient(135deg, #a855f7, #7c3aed); border-radius: 50%; }
+    .title { color: #a855f7; font-size: 13px; font-weight: 700; letter-spacing: 3px; margin-bottom: 4px; }
+    .sub { color: #444; font-size: 11px; letter-spacing: 1px; }
+    hr { border: none; border-top: 1px solid #1e1e1e; margin: 20px 0; }
+    .label { color: #555; font-size: 11px; letter-spacing: 1px; margin-bottom: 8px; }
+    input { width: 100%; background: #0d0d0d; border: 1px solid #2a2a2a; color: #fff; padding: 12px 16px; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 13px; outline: none; transition: border-color 0.2s; }
     input:focus { border-color: #a855f7; }
-    button { width: 100%; background: #a855f7; color: #fff; border: none; padding: 12px; border-radius: 6px; font-family: monospace; font-size: 0.9rem; cursor: pointer; }
-    button:hover { background: #9333ea; }
-    .error { color: #ef4444; font-size: 0.85rem; margin-top: 12px; display: none; }
-    .key-box { background: #0a0a0a; padding: 12px; border-radius: 6px; border: 1px solid #2a2a2a; word-break: break-all; color: #fff; font-size: 1rem; margin-bottom: 16px; }
-    .success { display: none; text-align: center; }
-    .loading { text-align: center; color: #a855f7; display: none; }
+    .btn { width: 100%; background: #a855f7; color: #fff; border: none; padding: 13px; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; letter-spacing: 2px; cursor: pointer; transition: background 0.2s, transform 0.1s; margin-top: 16px; }
+    .btn:hover { background: #9333ea; }
+    .btn:active { transform: scale(0.98); }
+    .btn:disabled { background: #6b21a8; cursor: not-allowed; }
+    .spinner { display: inline-block; width: 12px; height: 12px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.6s linear infinite; vertical-align: middle; margin-right: 8px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .error-box { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); border-radius: 8px; padding: 10px 14px; color: #ef4444; font-size: 11px; margin-top: 12px; display: none; letter-spacing: 0.5px; }
+    .success-view { display: none; text-align: center; animation: fadeUp 0.4s ease; }
+    .success-icon { width: 52px; height: 52px; border-radius: 50%; background: rgba(168,85,247,0.1); border: 2px solid #a855f7; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 22px; }
+    .success-title { color: #a855f7; font-size: 13px; font-weight: 700; letter-spacing: 3px; margin-bottom: 20px; }
+    .key-wrap { background: #0d0d0d; border: 1px solid #2a2a2a; border-radius: 8px; padding: 14px 16px; margin-bottom: 12px; position: relative; }
+    .key-text { color: #fff; font-size: 12px; word-break: break-all; line-height: 1.6; padding-right: 56px; }
+    .copy-btn { position: absolute; top: 50%; right: 12px; transform: translateY(-50%); background: #1e1e1e; border: 1px solid #333; color: #888; padding: 4px 8px; border-radius: 4px; font-size: 10px; cursor: pointer; font-family: 'JetBrains Mono', monospace; transition: all 0.2s; }
+    .copy-btn:hover { border-color: #a855f7; color: #a855f7; }
+    .copy-btn.copied { border-color: #22c55e; color: #22c55e; }
+    .product-tag { display: inline-block; background: rgba(168,85,247,0.1); border: 1px solid rgba(168,85,247,0.2); color: #a855f7; font-size: 10px; letter-spacing: 1px; padding: 4px 10px; border-radius: 4px; margin-bottom: 16px; }
+    .warn { color: #ef4444; font-size: 10px; letter-spacing: 0.5px; line-height: 1.6; }
+    .loading-view { display: none; text-align: center; padding: 20px 0; }
+    .loading-view .spinner { width: 20px; height: 20px; border-width: 3px; margin: 0 auto 12px; display: block; }
+    .loading-text { color: #555; font-size: 11px; letter-spacing: 1px; }
   </style>
 </head>
 <body>
   <div class="box">
-    <div id="loading-view" class="loading">
-      <h1 style="margin-bottom:16px">CLAIMING YOUR KEY...</h1>
-      <p>Please wait...</p>
+    <div class="logo">
+      <div class="logo-ring"><div class="logo-inner"></div></div>
+      <div class="title">CLAIM YOUR KEY</div>
+      <div class="sub">ENTER ORDER ID TO RETRIEVE LICENSE</div>
+    </div>
+    <hr>
+    <div id="loading-view" class="loading-view">
+      <span class="spinner"></span>
+      <div class="loading-text">CLAIMING YOUR LICENSE...</div>
     </div>
     <div id="form-view">
-      <h1>CLAIM YOUR KEY</h1>
-      <p>Enter your Ko-fi Order ID from your receipt to retrieve your license key.</p>
-      <input type="text" id="orderId" placeholder="Ko-fi Order ID" />
-      <button onclick="claim()">CLAIM</button>
-      <p class="error" id="error"></p>
+      <div class="label">KO-FI ORDER ID</div>
+      <input type="text" id="orderId" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
+      <button class="btn" id="claimBtn" onclick="claim()">CLAIM LICENSE</button>
+      <div class="error-box" id="error"></div>
     </div>
-    <div id="success-view" class="success">
-      <h1 style="color:#a855f7;margin-bottom:16px">YOUR LICENSE KEY</h1>
-      <div class="key-box" id="key-display"></div>
-      <p style="color:#666;font-size:0.8rem" id="product-display"></p>
-      <p style="color:#ef4444;font-size:0.8rem;margin-top:12px">!! SAVE THIS KEY - THIS PAGE WILL NOT WORK AGAIN !!</p>
+    <div class="success-view" id="success-view">
+      <div class="success-icon">&#10003;</div>
+      <div class="success-title">KEY CLAIMED SUCCESSFULLY</div>
+      <div class="product-tag" id="product-display">PRODUCT</div>
+      <div class="key-wrap">
+        <div class="key-text" id="key-display"></div>
+        <button class="copy-btn" id="copy-btn" onclick="copyKey()">COPY</button>
+      </div>
+      <div class="warn">!! SAVE THIS KEY - THIS PAGE WILL NOT WORK AGAIN !!</div>
     </div>
   </div>
   <script>
+    var currentKey = '';
     async function claim() {
-      const orderId = document.getElementById('orderId').value.trim()
-      if (!orderId) return
-      const btn = document.querySelector('button')
-      if (btn) { btn.disabled = true; btn.textContent = 'CLAIMING...' }
-      const res = await fetch('https://fkjjubbqvejhkwfvkbua.supabase.co/functions/v1/x7k2mq9p?order=' + encodeURIComponent(orderId))
-      const data = await res.json()
-      document.getElementById('loading-view').style.display = 'none'
+      var orderId = document.getElementById('orderId').value.trim();
+      if (!orderId) return;
+      var btn = document.getElementById('claimBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span>CLAIMING...';
+      var res = await fetch('https://fkjjubbqvejhkwfvkbua.supabase.co/functions/v1/x7k2mq9p?order=' + encodeURIComponent(orderId));
+      var data = await res.json();
       if (data.success) {
-        document.getElementById('form-view').style.display = 'none'
-        document.getElementById('success-view').style.display = 'block'
-        document.getElementById('key-display').textContent = data.key
-        document.getElementById('product-display').textContent = 'Product: ' + data.product
+        document.getElementById('form-view').style.display = 'none';
+        document.getElementById('loading-view').style.display = 'none';
+        var sv = document.getElementById('success-view');
+        sv.style.display = 'block';
+        currentKey = data.key;
+        document.getElementById('key-display').textContent = data.key;
+        document.getElementById('product-display').textContent = data.product.toUpperCase();
       } else {
-        document.getElementById('form-view').style.display = 'block'
-        let i = 3
-        const err = document.getElementById('error')
-        err.style.display = 'block'
-        err.textContent = data.message + ' - Closing in ' + i + 's'
-        const t = setInterval(function() {
-          i--
-          err.textContent = data.message + ' - Closing in ' + i + 's'
-          if (i <= 0) { clearInterval(t); window.close(); document.body.innerHTML = '' }
-        }, 1000)
-        if (btn) { btn.disabled = false; btn.textContent = 'CLAIM' }
+        btn.disabled = false;
+        btn.textContent = 'CLAIM LICENSE';
+        var i = 3;
+        var err = document.getElementById('error');
+        err.style.display = 'block';
+        err.textContent = data.message + ' - Closing in ' + i + 's';
+        var t = setInterval(function() {
+          i--;
+          err.textContent = data.message + ' - Closing in ' + i + 's';
+          if (i <= 0) { clearInterval(t); window.close(); document.body.innerHTML = ''; }
+        }, 1000);
       }
     }
-
+    function copyKey() {
+      navigator.clipboard.writeText(currentKey);
+      var btn = document.getElementById('copy-btn');
+      btn.textContent = 'COPIED';
+      btn.classList.add('copied');
+      setTimeout(function() { btn.textContent = 'COPY'; btn.classList.remove('copied'); }, 2000);
+    }
     window.addEventListener('load', function() {
-      const params = new URLSearchParams(window.location.search)
-      const txid = params.get('txid')
+      var params = new URLSearchParams(window.location.search);
+      var txid = params.get('txid');
       if (txid) {
-        document.getElementById('form-view').style.display = 'none'
-        document.getElementById('loading-view').style.display = 'block'
-        document.getElementById('orderId').value = txid
-        claim()
+        document.getElementById('form-view').style.display = 'none';
+        document.getElementById('loading-view').style.display = 'block';
+        document.getElementById('orderId').value = txid;
+        claim();
       }
-    })
+    });
   </script>
 </body>
 </html>
