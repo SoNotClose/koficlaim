@@ -15,10 +15,15 @@
     .error { color: #ef4444; font-size: 0.85rem; margin-top: 12px; display: none; }
     .key-box { background: #0a0a0a; padding: 12px; border-radius: 6px; border: 1px solid #2a2a2a; word-break: break-all; color: #fff; font-size: 1rem; margin-bottom: 16px; }
     .success { display: none; text-align: center; }
+    .loading { text-align: center; color: #a855f7; display: none; }
   </style>
 </head>
 <body>
   <div class="box">
+    <div id="loading-view" class="loading">
+      <h1 style="margin-bottom:16px">CLAIMING YOUR KEY...</h1>
+      <p>Please wait...</p>
+    </div>
     <div id="form-view">
       <h1>CLAIM YOUR KEY</h1>
       <p>Enter your Ko-fi Order ID from your receipt to retrieve your license key.</p>
@@ -38,16 +43,17 @@
       const orderId = document.getElementById('orderId').value.trim()
       if (!orderId) return
       const btn = document.querySelector('button')
-      btn.disabled = true
-      btn.textContent = 'CLAIMING...'
+      if (btn) { btn.disabled = true; btn.textContent = 'CLAIMING...' }
       const res = await fetch('https://fkjjubbqvejhkwfvkbua.supabase.co/functions/v1/x7k2mq9p?order=' + encodeURIComponent(orderId))
       const data = await res.json()
+      document.getElementById('loading-view').style.display = 'none'
       if (data.success) {
         document.getElementById('form-view').style.display = 'none'
         document.getElementById('success-view').style.display = 'block'
         document.getElementById('key-display').textContent = data.key
         document.getElementById('product-display').textContent = 'Product: ' + data.product
       } else {
+        document.getElementById('form-view').style.display = 'block'
         let i = 3
         const err = document.getElementById('error')
         err.style.display = 'block'
@@ -57,10 +63,20 @@
           err.textContent = data.message + ' - Closing in ' + i + 's'
           if (i <= 0) { clearInterval(t); window.close(); document.body.innerHTML = '' }
         }, 1000)
-        btn.disabled = false
-        btn.textContent = 'CLAIM'
+        if (btn) { btn.disabled = false; btn.textContent = 'CLAIM' }
       }
     }
+
+    window.addEventListener('load', function() {
+      const params = new URLSearchParams(window.location.search)
+      const txid = params.get('txid')
+      if (txid) {
+        document.getElementById('form-view').style.display = 'none'
+        document.getElementById('loading-view').style.display = 'block'
+        document.getElementById('orderId').value = txid
+        claim()
+      }
+    })
   </script>
 </body>
 </html>
